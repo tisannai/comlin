@@ -1,0 +1,8 @@
+build
+vendor
+test/support/*
+test/result/*
+test/comlin_*
+doc
+.gdbinit
+.tiide.el
