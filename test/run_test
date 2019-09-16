@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require 'como'
+include Como
+require 'fileutils'
+require 'stringio'
+
+Spec.command( 'run_test', 'Tero Isannainen', '2018',
+    [
+        [ :single, 'file', '-f', "File." ],
+    ] )
+
+
+# Test execution routine.
+def runTest( test )
+    Dir.chdir( 'test' )
+    FileUtils.mkdir_p "result"
+    rf = "result/#{test}.txt"
+    gf = "golden/#{test}.txt"
+
+    system( "gcc -Wall -std=gnu99 -lgromer -lslinky -g comlin_#{test}.c ../build/test/out/c/comlin.o -o comlin_#{test}" )
+
+    system( "rm -f #{rf}; touch #{rf}" )
+
+    File.open( "test_#{test}" ).readlines.each do |cmd|
+        cmd = cmd.chomp
+        next if cmd.empty?
+        system( "echo \"---- CMD: #{cmd}\" >> #{rf}" )
+        system( "export RUBYLIB=../lib; #{cmd} >> #{rf} 2>&1" )
+    end
+
+    ret = system( "diff #{rf} #{gf}" )
+    Dir.chdir( '..' )
+
+    return ret
+end
+
+exit( runTest( Opt['file'].value ) )

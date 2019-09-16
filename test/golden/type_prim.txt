@@ -1,0 +1,465 @@
+---- CMD: comlin_type_prim
+
+comlin_type_prim error: Option "-f" missing for "comlin_type_prim"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim --doc
+Given "help": false
+Given "doc": true
+Given "file": false
+Given "debug": false
+Given "mode": false
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": false
+Given "<default>": false
+---- CMD: comlin_type_prim --doc -f
+
+comlin_type_prim error: No argument given for "-f"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim --doc -f foo
+Given "help": false
+Given "doc": true
+Given "file": true
+Value "file": foo
+Given "debug": false
+Given "mode": false
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": false
+Given "<default>": false
+---- CMD: comlin_type_prim -f
+
+comlin_type_prim error: No argument given for "-f"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim -f dii
+
+comlin_type_prim error: Option "-d" missing for "comlin_type_prim"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim -f dii -d
+
+comlin_type_prim error: No argument given for "-d"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim --file dii -d d1
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim --file dii -d d1 d2
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1", "d2"]
+Given "<default>": false
+---- CMD: comlin_type_prim --debug -f dii -d d1
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": true
+Given "mode": false
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 --debug
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": true
+Given "mode": false
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 --debug -m foo
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": true
+Given "mode": true
+Value "mode": foo
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 --debug -m foo
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": true
+Given "mode": true
+Value "mode": foo
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 --params foo=bar dii=duu
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": true
+Value "params": ["foo=bar", "dii=duu"]
+Given "types": false
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 --params foo=bar dii=duu -t
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": true
+Value "params": ["foo=bar", "dii=duu"]
+Given "types": true
+Value "types": []
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 --params foo=bar dii=duu -t duu dii
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": true
+Value "params": ["foo=bar", "dii=duu"]
+Given "types": true
+Value "types": ["duu", "dii"]
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 --params foo=bar dii=duu -t duu dii left over
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": true
+Value "params": ["foo=bar", "dii=duu"]
+Given "types": true
+Value "types": ["duu", "dii", "left", "over"]
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 -t --params foo=bar dii=duu left over
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": true
+Value "params": ["foo=bar", "dii=duu", "left", "over"]
+Given "types": true
+Value "types": []
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": false
+---- CMD: comlin_type_prim -t duu dii --params foo=bar dii=duu -f dii -d d1 left over
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": true
+Value "params": ["foo=bar", "dii=duu"]
+Given "types": true
+Value "types": ["duu", "dii"]
+Given "terminator": false
+Given "dir": true
+Value "dir": ["d1", "left", "over"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f dii -d d1 -t duu dii --params foo=bar dii=duu - left over
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": true
+Value "params": ["foo=bar", "dii=duu"]
+Given "types": true
+Value "types": ["duu", "dii"]
+Given "terminator": true
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": true
+Value "<default>": ["left", "over"]
+---- CMD: comlin_type_prim -f dii -d d1 -t duu dii - left over -- external arguments
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": dii
+Given "debug": false
+Given "mode": false
+Given "params": false
+Given "types": true
+Value "types": ["duu", "dii"]
+Given "terminator": true
+Given "dir": true
+Value "dir": ["d1"]
+Given "<default>": true
+Value "<default>": ["left", "over"]
+External: ["external", "arguments"]
+---- CMD: comlin_type_prim -f foo -- external arguments
+
+comlin_type_prim error: Option "-d" missing for "comlin_type_prim"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim -f foo -t
+
+comlin_type_prim error: Option "-d" missing for "comlin_type_prim"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim -q dii -f foo -t
+
+comlin_type_prim error: Unknown option "-q"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim -d -q dii -f foo -t
+
+comlin_type_prim error: No argument given for "-d"...
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim -f foo -d dir
+Given "help": false
+Given "doc": false
+Given "file": true
+Value "file": foo
+Given "debug": false
+Given "mode": false
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": true
+Value "dir": ["dir"]
+Given "<default>": false
+---- CMD: comlin_type_prim -f foo -d dir -h
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim -h -f foo -d dir
+
+  comlin_type_prim [--doc] -f <file> [--debug] [-m <mode>] [--params <params>+] [-t <types>*] -d <dir>+ [<default>]
+
+  --doc       Documentation for option
+              with too much description
+              for one line.
+  -f          File argument.
+  --debug     Enable debugging.
+  -m          Mode.
+  --params    Parameters.
+  -t          Types.
+  -d          Directory argument(s).
+  <default>   Leftovers.
+
+
+  Copyright (c) 2018 by Comlin Tester
+
+---- CMD: comlin_type_prim --doc doc1 doc2
+Given "help": false
+Given "doc": true
+Given "file": false
+Given "debug": false
+Given "mode": false
+Given "params": false
+Given "types": false
+Given "terminator": false
+Given "dir": false
+Given "<default>": true
+Value "<default>": ["doc1", "doc2"]

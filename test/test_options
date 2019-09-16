@@ -1,0 +1,29 @@
+comlin_options
+comlin_options --doc
+comlin_options --doc -f
+comlin_options --doc -f foo
+comlin_options -f
+comlin_options -f dii
+comlin_options -f dii -d
+comlin_options --file dii -d d1
+comlin_options --file dii -d d1 d2
+comlin_options --debug -f dii -d d1
+comlin_options -f dii -d d1 --debug
+comlin_options -f dii -d d1 --debug -m foo
+comlin_options -f dii -d d1 --debug -m foo
+comlin_options -f dii -d d1 --params foo=bar dii=duu
+comlin_options -f dii -d d1 --params foo=bar dii=duu -t
+comlin_options -f dii -d d1 --params foo=bar dii=duu -t duu dii
+comlin_options -f dii -d d1 --params foo=bar dii=duu -t duu dii left over
+comlin_options -f dii -d d1 -t --params foo=bar dii=duu left over
+comlin_options -t duu dii --params foo=bar dii=duu -f dii -d d1 left over
+comlin_options -f dii -d d1 -t duu dii --params foo=bar dii=duu - left over
+comlin_options -f dii -d d1 -t duu dii - left over -- external arguments
+comlin_options -f foo -- external arguments
+comlin_options -f foo -t
+comlin_options -q dii -f foo -t
+comlin_options -d -q dii -f foo -t
+comlin_options -f foo -d dir
+comlin_options -f foo -d dir -h
+comlin_options -h -f foo -d dir
+comlin_options --doc doc1 doc2

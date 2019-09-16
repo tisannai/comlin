@@ -1,0 +1,12 @@
+comlin_config
+comlin_config --doc
+comlin_config --doc -f
+comlin_config --doc -f foo
+comlin_config -f
+comlin_config -f dii
+comlin_config -f dii -d
+comlin_config --file dii -d d1
+comlin_config --file dii -d d1 d2
+comlin_config --debug -f dii -d d1
+comlin_config -h
+comlin_config -h --debug -f dii -d d1

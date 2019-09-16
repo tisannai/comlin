@@ -1,0 +1,29 @@
+comlin_type_prim
+comlin_type_prim --doc
+comlin_type_prim --doc -f
+comlin_type_prim --doc -f foo
+comlin_type_prim -f
+comlin_type_prim -f dii
+comlin_type_prim -f dii -d
+comlin_type_prim --file dii -d d1
+comlin_type_prim --file dii -d d1 d2
+comlin_type_prim --debug -f dii -d d1
+comlin_type_prim -f dii -d d1 --debug
+comlin_type_prim -f dii -d d1 --debug -m foo
+comlin_type_prim -f dii -d d1 --debug -m foo
+comlin_type_prim -f dii -d d1 --params foo=bar dii=duu
+comlin_type_prim -f dii -d d1 --params foo=bar dii=duu -t
+comlin_type_prim -f dii -d d1 --params foo=bar dii=duu -t duu dii
+comlin_type_prim -f dii -d d1 --params foo=bar dii=duu -t duu dii left over
+comlin_type_prim -f dii -d d1 -t --params foo=bar dii=duu left over
+comlin_type_prim -t duu dii --params foo=bar dii=duu -f dii -d d1 left over
+comlin_type_prim -f dii -d d1 -t duu dii --params foo=bar dii=duu - left over
+comlin_type_prim -f dii -d d1 -t duu dii - left over -- external arguments
+comlin_type_prim -f foo -- external arguments
+comlin_type_prim -f foo -t
+comlin_type_prim -q dii -f foo -t
+comlin_type_prim -d -q dii -f foo -t
+comlin_type_prim -f foo -d dir
+comlin_type_prim -f foo -d dir -h
+comlin_type_prim -h -f foo -d dir
+comlin_type_prim --doc doc1 doc2

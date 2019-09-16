@@ -1,0 +1,33 @@
+comlin_subcmd
+comlin_subcmd -h
+comlin_subcmd -p passwd
+comlin_subcmd add
+comlin_subcmd add -f
+comlin_subcmd add -f file
+comlin_subcmd -p pass add -f file
+comlin_subcmd -p pass -u name1 add -f file
+comlin_subcmd -p pass -u name1 - add -f file
+
+comlin_subcmd -p pass add -f file -u user
+comlin_subcmd -p pass add -f file
+comlin_subcmd -p pass add -f file -fo
+comlin_subcmd -p pass add -f file -fo -h
+comlin_subcmd -p pass add -f file -fo rm
+comlin_subcmd add -f file -fo commit
+comlin_subcmd -p pass add -f file -fo commit
+
+comlin_subcmd -p pass rm
+comlin_subcmd -p pass rm commit
+comlin_subcmd -p pass rm -f commit
+
+comlin_subcmd -p pass commit
+comlin_subcmd -p pass commit dii duu
+comlin_subcmd -p pass commit -u user1 dii duu
+comlin_subcmd -p pass commit -u user1 dii duu -h
+comlin_subcmd -p pass commit -h -u user1 dii duu
+comlin_subcmd commit -h -u user1 dii duu -h
+comlin_subcmd commit -u user1 dii duu -h
+
+comlin_subcmd -p foo commit foo -- external arguments
+
+comlin_subcmd foo
