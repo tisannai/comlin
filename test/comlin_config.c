@@ -4,7 +4,6 @@
  * Test option types.
  */
 
-//#include "../src/mc.h"
 #include "../src/comlin.h"
 
 int main( int argc, char** argv )

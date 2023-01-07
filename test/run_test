@@ -18,7 +18,7 @@ def runTest( test )
     rf = "result/#{test}.txt"
     gf = "golden/#{test}.txt"
 
-    system( "gcc -Wall -std=gnu99 -lgromer -lslinky -g comlin_#{test}.c ../build/test/out/c/comlin.o -o comlin_#{test}" )
+    system( "gcc -Wall -std=gnu99 -g comlin_#{test}.c ../build/test/out/c/comlin.o -o comlin_#{test} -lslinky -lgromer" )
 
     system( "rm -f #{rf}; touch #{rf}" )
 

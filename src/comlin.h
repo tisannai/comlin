@@ -476,7 +476,6 @@
 
 
 #include <sixten.h>
-#include <gromer.h>
 #include <slinky.h>
 
 
