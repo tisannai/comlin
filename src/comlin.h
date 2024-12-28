@@ -475,9 +475,20 @@
  */
 
 
-#include <sixten.h>
-#include <slinky.h>
+/* Select Slinky or Slider as library. */
+#ifdef COMLIN_USE_SLINKY
+#define COMLIN_USE_SLIDER 0
+#else
+#define COMLIN_USE_SLIDER 1
+#endif
 
+
+#include <sixten.h>
+#if COMLIN_USE_SLIDER == 1
+#include <slider.h>
+#else
+#include <slinky.h>
+#endif
 
 
 /** Comlin-library version. */
@@ -556,7 +567,12 @@ st_struct( cl_opt )
     const char* doc;
 
     /** Generated longopt name: "--#{name}". */
+#if COMLIN_USE_SLIDER == 1
+    char longopt_use[ 128 ];
+    sd_s longopt;
+#else
     sl_t longopt;
+#endif
 
     /** Number of values. */
     int valuecnt;
@@ -735,13 +751,12 @@ extern char** cl_argv;
  */
 #define cl_subcmd( name, parentname, ... ) \
     cl_spec_subcmd(                        \
-        name, parentname, ( cl_opt_spec_s[] ){ __VA_ARGS__ }, cl_spec_size( __VA_ARGS__ ) )
+        name, parentname, (cl_opt_spec_s[]){ __VA_ARGS__ }, cl_spec_size( __VA_ARGS__ ) )
 
 /**
  * Option specification list (array) size.
  */
-#define cl_spec_size( ... ) \
-    ( sizeof( ( cl_opt_spec_s[] ){ __VA_ARGS__ } ) / sizeof( cl_opt_spec_s ) )
+#define cl_spec_size( ... ) ( sizeof( (cl_opt_spec_s[]){ __VA_ARGS__ } ) / sizeof( cl_opt_spec_s ) )
 
 
 

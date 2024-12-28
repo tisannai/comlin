@@ -35,8 +35,9 @@ void display_options( cl_cmd_t cmd )
     }
 
     subcmd = cl_cmd_given_subcmd( cmd );
-    if ( subcmd )
+    if ( subcmd ) {
         display_options( subcmd );
+    }
 }
 
 
@@ -84,8 +85,9 @@ int main( int argc, char** argv )
         value = cl_cmd->external;
 
         while ( *value ) {
-            if ( !first )
+            if ( !first ) {
                 printf( ", " );
+            }
             printf( "\"%s\"", *value );
             first = st_false;
             value++;

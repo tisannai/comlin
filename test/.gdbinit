@@ -1,6 +1,6 @@
 #file comlin_options
 file comlin_subcmd
-set args
+set args add
 #break main
-break cl_spec_subcmd
+# break cl_spec_subcmd
 run

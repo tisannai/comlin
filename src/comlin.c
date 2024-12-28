@@ -153,8 +153,13 @@ static cl_opt_t opt_create( cl_opt_type_t type, const char* name, const char* op
     co->type = type;
     co->doc = doc;
 
+#if COMLIN_USE_SLIDER == 1
+    co->longopt = sd_use( co->longopt_use, 128 );
+    sd_format_quick( &co->longopt, "--%s", co->name );
+#else
     co->longopt = sl_from_str_with_size_c( "--", strlen( co->name ) + 3 );
     sl_concatenate_c( &co->longopt, co->name );
+#endif
 
     co->valuecnt = 0;
     co->value = NULL;
@@ -204,10 +209,12 @@ static cl_config_t config_dup( cl_config_t src )
 
     /* Setup config defaults. */
     conf->autohelp = src->autohelp;
-    if ( src->header )
+    if ( src->header ) {
         conf->header = st_strdup( src->header );
-    if ( src->footer )
+    }
+    if ( src->footer ) {
         conf->footer = st_strdup( src->footer );
+    }
     conf->subcheck = src->subcheck;
     conf->check_missing = src->check_missing;
     conf->check_invalid = src->check_invalid;
@@ -240,8 +247,9 @@ static void register_cmd( cl_cmd_t cmd )
 static cl_cmd_t find_cmd_by_name( char* name )
 {
     for ( int i = 0; i < cmd_list_idx; i++ ) {
-        if ( strcmp( cmd_list[ i ]->name, name ) == 0 )
+        if ( strcmp( cmd_list[ i ]->name, name ) == 0 ) {
             return cmd_list[ i ];
+        }
     }
     return NULL;
 }
@@ -259,8 +267,9 @@ static void add_subcmd( cl_cmd_t parent, cl_cmd_t subcmd )
         parent->subcmds = st_new_n( cl_cmd_s, 128 );
     }
 
-    if ( parent->subcmdcnt >= 128 )
+    if ( parent->subcmdcnt >= 128 ) {
         cl_fatal( "Too many sub-commands for \"%s\"!", parent->longname );
+    }
 
     parent->subcmds[ parent->subcmdcnt++ ] = subcmd;
 }
@@ -344,7 +353,11 @@ static cl_opt_t find_opt( cl_cmd_t cmd, char* str )
     } else if ( strncmp( str, "--", 2 ) == 0 ) {
         /* Long option. */
         while ( cmd->opts[ i ] ) {
+#if COMLIN_USE_SLIDER == 1
+            if ( sd_compare_cs( &cmd->opts[ i ]->longopt, str ) == 0 ) {
+#else
             if ( strcmp( cmd->opts[ i ]->longopt, str ) == 0 ) {
+#endif
                 return cmd->opts[ i ];
             }
             i++;
@@ -399,10 +412,11 @@ static st_bool_t is_opt( void )
 
     s = get_arg();
 
-    if ( s[ 0 ] == '-' )
+    if ( s[ 0 ] == '-' ) {
         return st_true;
-    else
+    } else {
         return st_false;
+    }
 }
 
 
@@ -417,10 +431,11 @@ static st_bool_t is_opt( void )
 static st_bool_t has_switch_style_doc( cl_opt_t opt )
 {
     if ( ( ( opt->type & CL_P_NONE ) && !( opt->type & CL_P_MANY ) ) ||
-         ( opt->type & CL_P_DEFAULT ) )
+         ( opt->type & CL_P_DEFAULT ) ) {
         return st_true;
-    else
+    } else {
         return st_false;
+    }
 }
 
 
@@ -513,15 +528,17 @@ static st_bool_t check_missing( cl_cmd_t cmd, cl_cmd_p errcmd )
     st_bool_t subcheck;
     cl_cmd_t  subcmd;
 
-    if ( !cmd->conf->check_missing )
+    if ( !cmd->conf->check_missing ) {
         return st_true;
+    }
 
     /* Check for any exclusive args first. Missing are not checked if has exclusives. */
     opts = cmd->opts;
     while ( *opts ) {
         o = *opts;
-        if ( ( o->type & CL_P_MUTEX ) && o->given )
+        if ( ( o->type & CL_P_MUTEX ) && o->given ) {
             return ret;
+        }
         opts++;
     }
 
@@ -540,12 +557,14 @@ static st_bool_t check_missing( cl_cmd_t cmd, cl_cmd_p errcmd )
     /* Check for missing subcmds. */
     if ( cmd->subcmds ) {
         /* Has subcmds. */
-        if ( cmd->conf->subcheck )
+        if ( cmd->conf->subcheck ) {
             subcheck = st_true;
-        else
+        } else {
             subcheck = st_false;
-    } else
+        }
+    } else {
         subcheck = st_false;
+    }
 
     subcmd = cl_cmd_given_subcmd( cmd );
 
@@ -609,8 +628,9 @@ static int parse_opts( cl_cmd_t cmd, cl_cmd_p subcmd )
                         cl_error( "No default option specified to allow \"%s\"...", get_arg() );
                         break;
                     } else {
-                        if ( !o->value )
+                        if ( !o->value ) {
                             cmd->givencnt++;
+                        }
                         add_value( &( o->value ), get_arg() );
                         o->valuecnt++;
                     }
@@ -663,14 +683,16 @@ static int parse_opts( cl_cmd_t cmd, cl_cmd_p subcmd )
                 o = find_opt_by_type( cmd, CL_P_DEFAULT );
 
                 if ( !o ) {
-                    if ( cmd->subcmds )
+                    if ( cmd->subcmds ) {
                         cl_error( "Unknown subcmd: \"%s\"...", get_arg() );
-                    else
+                    } else {
                         cl_error( "No default option specified to allow \"%s\"...", get_arg() );
+                    }
                     next_arg();
                 } else {
-                    if ( !o->value )
+                    if ( !o->value ) {
                         cmd->givencnt++;
+                    }
                     add_value( &( o->value ), get_arg() );
                     o->valuecnt++;
                     o->given = st_true;
@@ -695,8 +717,9 @@ static int parse_opts( cl_cmd_t cmd, cl_cmd_p subcmd )
         cmd->errors = cl_cmd->errors;
         *subcmd = cmd;
         return 2;
-    } else
+    } else {
         return 0;
+    }
 }
 
 
@@ -738,28 +761,61 @@ static st_bool_t setup_and_parse( cl_cmd_t cmd, cl_cmd_p errcmd )
  * @param [out] str String where command line is stored.
  * @param [in] o Option to add.
  */
+#if COMLIN_USE_SLIDER == 1
+static void opt_cmdline( sd_t str, cl_opt_t o )
+{
+    if ( o->type & CL_P_HIDDEN ) {
+        return;
+    }
+
+    if ( o->type & CL_P_OPT ) {
+        sd_format_quick( str, "[" );
+    }
+
+    sd_format_quick( str, "%s", cl_opt_id( o ) );
+
+    if ( !has_switch_style_doc( o ) ) {
+        sd_format_quick( str, " <%s>", o->name );
+
+        if ( ( o->type & CL_P_NONE ) && ( o->type & CL_P_MANY ) ) {
+            sd_format_quick( str, "*" );
+        } else if ( o->type & CL_P_MANY ) {
+            sd_format_quick( str, "+" );
+        }
+    }
+
+    if ( o->type & CL_P_OPT ) {
+        sd_format_quick( str, "]" );
+    }
+}
+#else
 static void opt_cmdline( sl_p str, cl_opt_t o )
 {
-    if ( o->type & CL_P_HIDDEN )
+    if ( o->type & CL_P_HIDDEN ) {
         return;
+    }
 
-    if ( o->type & CL_P_OPT )
+    if ( o->type & CL_P_OPT ) {
         sl_format_quick( str, "[" );
+    }
 
     sl_format_quick( str, "%s", cl_opt_id( o ) );
 
     if ( !has_switch_style_doc( o ) ) {
         sl_format_quick( str, " <%s>", o->name );
 
-        if ( ( o->type & CL_P_NONE ) && ( o->type & CL_P_MANY ) )
+        if ( ( o->type & CL_P_NONE ) && ( o->type & CL_P_MANY ) ) {
             sl_format_quick( str, "*" );
-        else if ( o->type & CL_P_MANY )
+        } else if ( o->type & CL_P_MANY ) {
             sl_format_quick( str, "+" );
+        }
     }
 
-    if ( o->type & CL_P_OPT )
+    if ( o->type & CL_P_OPT ) {
         sl_format_quick( str, "]" );
+    }
 }
+#endif
 
 
 /**
@@ -769,13 +825,68 @@ static void opt_cmdline( sl_p str, cl_opt_t o )
  * @param o Option to document.
  * @param cmd Containing command (for configuration lookup).
  */
+#if COMLIN_USE_SLIDER == 1
+static void opt_doc( sd_t str, cl_opt_t o, cl_cmd_t cmd )
+{
+    int       s, e;
+    st_bool_t first;
+
+    if ( o->type & CL_P_HIDDEN ) {
+        return;
+    }
+
+    /*
+     * Reformat doc str, so that newlines start a new line and tab
+     * chars align the start to previous line.
+     */
+
+    first = st_true;
+    s = 0;
+    e = 0;
+    for ( ;; ) {
+        if ( o->doc[ e ] == '\n' || o->doc[ e ] == 0 ) {
+            if ( first ) {
+                sd_format_quick( str, "  %s%p", cl_opt_id( o ), cmd->conf->tab + 2 );
+                sd_append( str, sc_from_cl( (const char*)&( o->doc[ s ] ), ( e - s ) ) );
+                sd_append_ch( str, '\n' );
+
+                if ( o->doc[ e ] == 0 ) {
+                    return;
+                } else {
+                    e++;
+                }
+
+                first = st_false;
+            } else {
+                if ( o->doc[ s ] == '\t' ) {
+                    s++;
+                    sd_format_quick( str, "  %s%p", "", cmd->conf->tab + 2 );
+                }
+                sd_append( str, sc_from_cl( (const char*)&( o->doc[ s ] ), ( e - s ) ) );
+                sd_append_ch( str, '\n' );
+
+                if ( o->doc[ e ] == 0 ) {
+                    return;
+                } else {
+                    e++;
+                }
+            }
+            s = e;
+
+        } else {
+            e++;
+        }
+    }
+}
+#else
 static void opt_doc( sl_p str, cl_opt_t o, cl_cmd_t cmd )
 {
     int       s, e;
     st_bool_t first;
 
-    if ( o->type & CL_P_HIDDEN )
+    if ( o->type & CL_P_HIDDEN ) {
         return;
+    }
 
     /*
      * Reformat doc str, so that newlines start a new line and tab
@@ -792,10 +903,11 @@ static void opt_doc( sl_p str, cl_opt_t o, cl_cmd_t cmd )
                 sl_append_substr( str, (const char*)&( o->doc[ s ] ), ( e - s ) );
                 sl_append_char( str, '\n' );
 
-                if ( o->doc[ e ] == 0 )
+                if ( o->doc[ e ] == 0 ) {
                     return;
-                else
+                } else {
                     e++;
+                }
 
                 first = st_false;
             } else {
@@ -806,17 +918,20 @@ static void opt_doc( sl_p str, cl_opt_t o, cl_cmd_t cmd )
                 sl_append_substr( str, (char*)&( o->doc[ s ] ), ( e - s ) );
                 sl_append_char( str, '\n' );
 
-                if ( o->doc[ e ] == 0 )
+                if ( o->doc[ e ] == 0 ) {
                     return;
-                else
+                } else {
                     e++;
+                }
             }
             s = e;
 
-        } else
+        } else {
             e++;
+        }
     }
 }
+#endif
 
 
 /**
@@ -829,10 +944,11 @@ static void usage_if_help( cl_cmd_t cmd )
 {
     cl_cmd_t subcmd;
 
-    if ( cl_cmd_given( cmd, "help" ) )
+    if ( cl_cmd_given( cmd, "help" ) ) {
         cl_cmd_usage( cmd );
-    else if ( cmd->subcmds && ( subcmd = cl_cmd_given_subcmd( cmd ) ) )
+    } else if ( cmd->subcmds && ( subcmd = cl_cmd_given_subcmd( cmd ) ) ) {
         usage_if_help( subcmd );
+    }
 }
 
 
@@ -893,10 +1009,11 @@ cl_opt_t cl_given( char* name )
 {
     cl_opt_t co;
     co = find_opt_by_name( cl_cmd, name );
-    if ( co->given )
+    if ( co->given ) {
         return co;
-    else
+    } else {
         return NULL;
+    }
 }
 
 
@@ -918,18 +1035,20 @@ cl_opt_t cl_cmd_given( cl_cmd_t cmd, char* name )
 {
     cl_opt_t co;
     co = find_opt_by_name( cmd, name );
-    if ( co->given )
+    if ( co->given ) {
         return co;
-    else
+    } else {
         return NULL;
+    }
 }
 
 
 cl_cmd_t cl_cmd_subcmd( cl_cmd_t cmd, char* name )
 {
     for ( int i = 0; i < cmd_list_idx; i++ ) {
-        if ( strcmp( cmd->subcmds[ i ]->name, name ) == 0 )
+        if ( strcmp( cmd->subcmds[ i ]->name, name ) == 0 ) {
             return cmd->subcmds[ i ];
+        }
     }
     return NULL;
 }
@@ -944,8 +1063,9 @@ cl_cmd_t cl_given_subcmd( void )
 cl_cmd_t cl_cmd_given_subcmd( cl_cmd_t parent )
 {
     for ( int i = 0; i < parent->subcmdcnt; i++ ) {
-        if ( parent->subcmds[ i ]->given )
+        if ( parent->subcmds[ i ]->given ) {
             return parent->subcmds[ i ];
+        }
     }
     return NULL;
 }
@@ -960,9 +1080,14 @@ char** cl_external( void )
 const char* cl_opt_id( cl_opt_t opt )
 {
     if ( opt->type != CL_SUBCMD )
+#if COMLIN_USE_SLIDER == 1
+        return opt->shortopt ? opt->shortopt : sd_string( &opt->longopt );
+#else
         return opt->shortopt ? opt->shortopt : opt->longopt;
-    else
+#endif
+    else {
         return opt->name;
+    }
 }
 
 
@@ -1032,6 +1157,108 @@ void cl_usage( void )
 }
 
 
+#if COMLIN_USE_SLIDER == 1
+void cl_cmd_usage( cl_cmd_t cmd )
+{
+    char      buf[ 1024 ];
+    sd_s      str;
+    cl_opt_p  co;
+    st_bool_t main_cmd, has_visible;
+
+    str = sd_use( buf, 1024 );
+
+    if ( cmd->conf->header ) {
+        sd_format_quick( &str, "%s", cmd->conf->header );
+    } else {
+        sd_format_quick( &str, "\n" );
+    }
+
+    if ( !cmd->parent ) {
+        /* Main command. */
+        main_cmd = st_true;
+    } else {
+        /* Subcmd. */
+        main_cmd = st_false;
+    }
+
+
+    if ( main_cmd ) {
+        sd_format_quick( &str, "  %s", cmd->name );
+    } else {
+        sd_format_quick( &str, "  Subcommand \"%s\" usage:\n    ", cmd->name );
+        sd_format_quick( &str, "%s", cmd->longname );
+    }
+
+    /* Command line. */
+    has_visible = st_false;
+    co = cmd->opts;
+    while ( *co ) {
+        if ( !( ( *co )->type & CL_P_HIDDEN ) ) {
+
+            has_visible = st_true;
+
+            sd_format_quick( &str, " " );
+            if ( ( *co )->type != CL_SUBCMD ) {
+                opt_cmdline( &str, *co );
+            } else {
+                sd_format_quick( &str, "<<subcommand>>" );
+                break;
+            }
+        }
+        co++;
+    }
+
+    sd_format_quick( &str, "\n\n" );
+
+    /* If cmd has subcmds, use categories: Options, Subcommands. */
+
+    if ( cmd->subcmds && has_visible ) {
+        sd_format_quick( &str, "  Options:\n" );
+    }
+
+    /* Option documents. */
+    co = cmd->opts;
+    while ( *co ) {
+        if ( ( *co )->type != CL_SUBCMD ) {
+            opt_doc( &str, *co, cmd );
+        }
+        co++;
+    }
+
+    if ( cmd->subcmds ) {
+        sd_format_quick( &str, "\n  Subcommands:\n" );
+    }
+
+    /* Subcmd documents. */
+    co = cmd->opts;
+    while ( *co ) {
+        if ( ( *co )->type == CL_SUBCMD ) {
+            opt_doc( &str, *co, cmd );
+        }
+        co++;
+    }
+
+    if ( main_cmd ) {
+        sd_format_quick( &str, "\n\n  Copyright (c) %s by %s\n", cmd->year, cmd->author );
+    } else {
+        sd_format_quick( &str, "\n" );
+    }
+
+    if ( cmd->conf->footer ) {
+        sd_format_quick( &str, "%s", cmd->conf->footer );
+    } else {
+        sd_format_quick( &str, "\n" );
+    }
+
+    fprintf( stdout, sd_string( &str ) );
+
+    sd_del( &str );
+
+    if ( cmd->conf->help_exit ) {
+        quit( EXIT_FAILURE );
+    }
+}
+#else
 void cl_cmd_usage( cl_cmd_t cmd )
 {
     char      buf[ 1024 ];
@@ -1047,17 +1274,18 @@ void cl_cmd_usage( cl_cmd_t cmd )
         sl_format_quick( &str, "\n" );
     }
 
-    if ( !cmd->parent )
+    if ( !cmd->parent ) {
         /* Main command. */
         main_cmd = st_true;
-    else
+    } else {
         /* Subcmd. */
         main_cmd = st_false;
+    }
 
 
-    if ( main_cmd )
+    if ( main_cmd ) {
         sl_format_quick( &str, "  %s", cmd->name );
-    else {
+    } else {
         sl_format_quick( &str, "  Subcommand \"%s\" usage:\n    ", cmd->name );
         sl_format_quick( &str, "%s", cmd->longname );
     }
@@ -1071,9 +1299,9 @@ void cl_cmd_usage( cl_cmd_t cmd )
             has_visible = st_true;
 
             sl_format_quick( &str, " " );
-            if ( ( *co )->type != CL_SUBCMD )
+            if ( ( *co )->type != CL_SUBCMD ) {
                 opt_cmdline( &str, *co );
-            else {
+            } else {
                 sl_format_quick( &str, "<<subcommand>>" );
                 break;
             }
@@ -1085,25 +1313,29 @@ void cl_cmd_usage( cl_cmd_t cmd )
 
     /* If cmd has subcmds, use categories: Options, Subcommands. */
 
-    if ( cmd->subcmds && has_visible )
+    if ( cmd->subcmds && has_visible ) {
         sl_format_quick( &str, "  Options:\n" );
+    }
 
     /* Option documents. */
     co = cmd->opts;
     while ( *co ) {
-        if ( ( *co )->type != CL_SUBCMD )
+        if ( ( *co )->type != CL_SUBCMD ) {
             opt_doc( &str, *co, cmd );
+        }
         co++;
     }
 
-    if ( cmd->subcmds )
+    if ( cmd->subcmds ) {
         sl_format_quick( &str, "\n  Subcommands:\n" );
+    }
 
     /* Subcmd documents. */
     co = cmd->opts;
     while ( *co ) {
-        if ( ( *co )->type == CL_SUBCMD )
+        if ( ( *co )->type == CL_SUBCMD ) {
             opt_doc( &str, *co, cmd );
+        }
         co++;
     }
 
@@ -1127,6 +1359,7 @@ void cl_cmd_usage( cl_cmd_t cmd )
         quit( EXIT_FAILURE );
     }
 }
+#endif
 
 
 void cl_display_values( FILE* fh, cl_opt_t o )
@@ -1138,15 +1371,17 @@ void cl_display_values( FILE* fh, cl_opt_t o )
         fprintf( fh, "[" );
         value = o->value;
         while ( *value ) {
-            if ( !first )
+            if ( !first ) {
                 fprintf( fh, ", " );
+            }
             fprintf( fh, "\"%s\"", *value );
             first = st_false;
             value++;
         }
         fprintf( fh, "]" );
-    } else
+    } else {
         fprintf( fh, "%s", o->value[ 0 ] );
+    }
 }
 
 
@@ -1196,8 +1431,9 @@ void cl_spec_subcmd( char* name, char* parentname, cl_opt_spec_t spec, int size 
     } else {
         cmd = cmd_create();
         parent = find_cmd_by_name( parentname );
-        if ( !parent )
+        if ( !parent ) {
             cl_fatal( "Parent \"%s\" does not exist!", parentname );
+        }
         cmd->parent = parent;
         register_cmd( cmd );
         add_subcmd( parent, cmd );
@@ -1208,14 +1444,30 @@ void cl_spec_subcmd( char* name, char* parentname, cl_opt_spec_t spec, int size 
          * ancestors.
          */
         cmd->name = st_strdup( name );
+#if COMLIN_USE_SLIDER == 1
+        {
+            char*     strmem;
+            st_size_t size;
+            sd_s      sd;
+
+            size = strlen( parent->longname ) + strlen( name ) + 2;
+            size = ( ( size / 4 ) + 1 ) * 4;
+            strmem = st_alloc( size );
+            sd_init( &sd, strmem, size );
+            sd_format_quick( &sd, "%s %s", parent->longname, name );
+            cmd->longname = strmem;
+        }
+#else
         cmd->longname = sl_drop( sl_from_va_str_c( parent->longname, " ", name, NULL ) );
+#endif
     }
 
     cmd->optcnt = size;
 
-    if ( cmd->conf->autohelp )
+    if ( cmd->conf->autohelp ) {
         /* Add space for help. */
         cmd->optcnt++;
+    }
 
     /* optcnt + NULL. */
     opts = st_new_n( cl_opt_s, cmd->optcnt + 1 );
@@ -1248,28 +1500,37 @@ void cl_cmd_end( cl_cmd_t cmd )
     st_free( cmd->longname );
 
     /* Author and year are missing from subcmds. */
-    if ( cmd->author )
+    if ( cmd->author ) {
         st_free( cmd->author );
+    }
 
-    if ( cmd->year )
+    if ( cmd->year ) {
         st_free( cmd->year );
+    }
 
     if ( cmd->conf ) {
-        if ( cmd->conf->header )
+        if ( cmd->conf->header ) {
             st_free( cmd->conf->header );
-        if ( cmd->conf->footer )
+        }
+        if ( cmd->conf->footer ) {
             st_free( cmd->conf->footer );
+        }
         st_free( cmd->conf );
     }
 
     st_for_n ( cmd->optcnt ) {
+#if COMLIN_USE_SLIDER == 1
+        sd_del( &( cmd->opts[ i ]->longopt ) );
+#else
         sl_del( &( cmd->opts[ i ]->longopt ) );
+#endif
         st_free( cmd->opts[ i ]->value );
         st_free( cmd->opts[ i ] );
     }
 
-    if ( cmd->subcmds )
+    if ( cmd->subcmds ) {
         st_free( cmd->subcmds );
+    }
 
     st_free( cmd->opts );
     st_free( cmd );
