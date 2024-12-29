@@ -72,7 +72,6 @@ int main( int argc, char** argv )
 
     cl_finish();
 
-
     display_options( cl_cmd );
 
 

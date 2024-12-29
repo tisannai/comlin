@@ -54,6 +54,7 @@ static cl_config_t cl_conf = NULL;
  * Report fatal (internal) error.
  *
  */
+// GCOV_EXCL_START
 void cl_fatal( const char* format, ... )
 {
     va_list ap;
@@ -63,6 +64,7 @@ void cl_fatal( const char* format, ... )
     vfprintf( stderr, format, ap );
     va_end( ap );
 }
+// GCOV_EXCL_STOP
 
 
 /**
@@ -1151,10 +1153,12 @@ void cl_error( const char* format, ... )
 }
 
 
+// GCOV_EXCL_START
 void cl_usage( void )
 {
     cl_cmd_usage( cl_cmd );
 }
+// GCOV_EXCL_STOP
 
 
 #if COMLIN_USE_SLIDER == 1
@@ -1450,10 +1454,9 @@ void cl_spec_subcmd( char* name, char* parentname, cl_opt_spec_t spec, int size 
             st_size_t size;
             sd_s      sd;
 
-            size = strlen( parent->longname ) + strlen( name ) + 2;
-            size = ( ( size / 4 ) + 1 ) * 4;
+            size = sd_legalize_reservation( strlen( parent->longname ) + strlen( name ) + 2 );
             strmem = st_alloc( size );
-            sd_init( &sd, strmem, size );
+            sd_use_mem( &sd, strmem, size );
             sd_format_quick( &sd, "%s %s", parent->longname, name );
             cmd->longname = strmem;
         }

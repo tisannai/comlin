@@ -24,11 +24,11 @@
 :paths:
   :test:
     - +:test/**
-    - -:test/support
+#     - -:test/support
   :source:
     - src/**
-  :support:
-    - test/support
+#   :support:
+#     - test/support
   :libraries: []
 
 :defines:
@@ -67,6 +67,8 @@
         - -Werror
         - -fdata-sections
         - -ffunction-sections
+        - --coverage
+#         - -fprofile-abs-path
     :link:
       :*:
         - -flto
@@ -81,6 +83,8 @@
         - -Werror
         - -fdata-sections
         - -ffunction-sections
+        - --coverage
+        - -fprofile-abs-path
     :link:
       :*:
         - -Wl,--gc-sections
@@ -89,15 +93,17 @@
   :test_linker:
     :executable: gcc
     :arguments:
+      - --coverage
       - ${1}
+#       - -fprofile-abs-path
       - -lm
       - -o ${2}
   :gcov_linker:
     :executable: gcc
     :arguments:
-      - -fprofile-arcs
-      - -ftest-coverage
+      - --coverage
       - ${1}
+      - -fprofile-abs-path
       - -lm
       - -o ${2}
   :release_compiler:

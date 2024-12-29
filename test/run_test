@@ -13,27 +13,29 @@ Spec.command( 'run_test', 'Tero Isannainen', '2018',
 
 # Test execution routine.
 def runTest( test )
-    Dir.chdir( 'test' )
-    FileUtils.mkdir_p "result"
-    rf = "result/#{test}.txt"
-    gf = "golden/#{test}.txt"
 
-#     system( "gcc -Wall -std=gnu99 -g comlin_#{test}.c ../build/test/out/c/comlin.o -o comlin_#{test} -lslinky -lgromer" )
-    system( "gcc -Wall -std=gnu99 -g comlin_#{test}.c ../build/test/out/c/comlin.o -o comlin_#{test} -lslider" )
+  Dir.chdir( 'test' )
+  FileUtils.mkdir_p "result"
+  rf = "result/#{test}.txt"
+  gf = "golden/#{test}.txt"
 
-    system( "rm -f #{rf}; touch #{rf}" )
+  system( "gcc -c -Wall -std=gnu99 -g comlin_#{test}.c -o comlin_#{test}.o" )
+  system( "gcc --coverage -Wall -std=gnu99 -o comlin_#{test} -g comlin_#{test}.o ../build/test/out/c/comlin.o -lslider" )
 
-    File.open( "test_#{test}" ).readlines.each do |cmd|
-        cmd = cmd.chomp
-        next if cmd.empty?
-        system( "echo \"---- CMD: #{cmd}\" >> #{rf}" )
-        system( "export RUBYLIB=../lib; #{cmd} >> #{rf} 2>&1" )
-    end
+  system( "rm -f #{rf}; touch #{rf}" )
 
-    ret = system( "diff #{rf} #{gf}" )
-    Dir.chdir( '..' )
+  File.open( "test_#{test}" ).readlines.each do |cmd|
+    cmd = cmd.chomp
+    next if cmd.empty?
+    system( "echo \"---- CMD: #{cmd}\" >> #{rf}" )
+    system( "export RUBYLIB=../lib; #{cmd} >> #{rf} 2>&1" )
+  end
 
-    return ret
+  ret = system( "diff #{rf} #{gf}" )
+  Dir.chdir( '..' )
+
+  return ret
+
 end
 
 exit( runTest( Opt['file'].value ) )

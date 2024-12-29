@@ -27,6 +27,8 @@ int main( int argc, char** argv )
                 { CL_MULTI, "dir", "-d", "Directory argument(s)." },
                 { CL_DEFAULT, NULL, NULL, "Leftovers." }, );
 
+//                     cl_conf_header( "Jiihaa header" );
+
     opts = cl_cmd->opts;
     while ( *opts ) {
         o = *opts;
@@ -51,14 +53,27 @@ int main( int argc, char** argv )
         value = cl_cmd->external;
 
         while ( *value ) {
-            if ( !first )
+            if ( !first ) {
                 printf( ", " );
+            }
             printf( "\"%s\"", *value );
             first = st_false;
             value++;
         }
 
         printf( "]\n" );
+    }
+
+    char** opt_value;
+
+    o = cl_opt( "file" );
+    assert( o != NULL );
+    o = cl_opt( NULL );
+    o = cl_cmd_opt( cl_cmd, "file" );
+    opt_value = cl_value( "file" );
+    opt_value = cl_cmd_value( cl_cmd, "file" );
+    if ( cl_given( "file" ) ) {
+        assert( opt_value != NULL );
     }
 
     cl_end();
