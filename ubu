@@ -1,0 +1,14 @@
+#!/usr/bin/env guile
+-s
+!#
+
+(use-modules (ubu core))
+
+(set ":log-level" 'output)
+
+(ubu-default "man")
+(action man
+        (sh "a2x -v --doctype manpage --format manpage --destination-dir man man/comlin.3.txt") 
+        (sh "cp man/comlin.3 $HOME/usr/man/man3"))
+
+(ubu-run-cli)

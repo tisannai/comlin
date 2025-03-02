@@ -1,41 +1,33 @@
-#!/usr/bin/env ruby
+#!/usr/bin/guile \
+-s
+!#
 
-require 'como'
-include Como
-require 'fileutils'
-require 'stringio'
+(use-modules (tuile como))
+(use-modules (tuile pr))
+(use-modules (tuile utils))
+(use-modules (tuile file-path))
 
-Spec.command( 'run_test', 'Tero Isannainen', '2018',
-    [
-        [ :single, 'file', '-f', "File." ],
-    ] )
+(como-command "run_test" "Tero Isannainen" "2025"
+    '(
+         [single         file     "-f"    "File"]
+         ))
 
 
-# Test execution routine.
-def runTest( test )
+(define (run-test test)
+  (let ((rf (si "result/#{test}.txt"))
+        (gf (si "golden/#{test}.txt")))
+    (chdir "test")
+    (fps-mkdir-p "result")
+    (system (si "gcc -c -Wall -std=gnu99 -g comlin_#{test}.c -o comlin_#{test}.o"))
+    (system (si "gcc --coverage -Wall -std=gnu99 -o comlin_#{test} -g comlin_#{test}.o ../build/test/out/test_comlin/comlin.o -lslider"))
+    (system (si "rm -f #{rf}; touch #{rf}"))
+    (for-each (lambda (cmd)
+                (when (not (string-null? cmd))
+                  (system (si "echo \"---- CMD: #{cmd}\" >> #{rf}"))
+                  (system (si "#{cmd} >> #{rf} 2>&1"))))
+              (file->lines (si "test_#{test}")))
+    (let ((ret (system (si "diff #{rf} #{gf}"))))
+      (chdir "..")
+      ret)))
 
-  Dir.chdir( 'test' )
-  FileUtils.mkdir_p "result"
-  rf = "result/#{test}.txt"
-  gf = "golden/#{test}.txt"
-
-  system( "gcc -c -Wall -std=gnu99 -g comlin_#{test}.c -o comlin_#{test}.o" )
-  system( "gcc --coverage -Wall -std=gnu99 -o comlin_#{test} -g comlin_#{test}.o ../build/test/out/test_comlin/comlin.o -lslider" )
-
-  system( "rm -f #{rf}; touch #{rf}" )
-
-  File.open( "test_#{test}" ).readlines.each do |cmd|
-    cmd = cmd.chomp
-    next if cmd.empty?
-    system( "echo \"---- CMD: #{cmd}\" >> #{rf}" )
-    system( "export RUBYLIB=../lib; #{cmd} >> #{rf} 2>&1" )
-  end
-
-  ret = system( "diff #{rf} #{gf}" )
-  Dir.chdir( '..' )
-
-  return ret
-
-end
-
-exit( runTest( Opt['file'].value ) )
+(exit (run-test (como-value "file")))
