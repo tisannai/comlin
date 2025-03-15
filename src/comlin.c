@@ -156,7 +156,7 @@ static cl_opt_t opt_create( cl_opt_type_t type, const char* name, const char* op
     co->doc = doc;
 
 #if COMLIN_USE_SLIDER == 1
-    co->longopt = sd_use( co->longopt_use, 128 );
+    co->longopt = sd_use( co->longopt_use, 128, sd_typ_st );
     sd_format_quick( &co->longopt, "--%s", co->name );
 #else
     co->longopt = sl_from_str_with_size_c( "--", strlen( co->name ) + 3 );
@@ -1169,7 +1169,7 @@ void cl_cmd_usage( cl_cmd_t cmd )
     cl_opt_p  co;
     st_bool_t main_cmd, has_visible;
 
-    str = sd_use( buf, 1024 );
+    str = sd_use( buf, 1024, sd_typ_st );
 
     if ( cmd->conf->header ) {
         sd_format_quick( &str, "%s", cmd->conf->header );
@@ -1456,7 +1456,7 @@ void cl_spec_subcmd( char* name, char* parentname, cl_opt_spec_t spec, int size 
 
             size = sd_legalize_reservation( strlen( parent->longname ) + strlen( name ) + 2 );
             strmem = st_alloc( size );
-            sd_use_mem( &sd, strmem, size );
+            sd_use_mem( &sd, strmem, size, sd_typ_hp );
             sd_format_quick( &sd, "%s %s", parent->longname, name );
             cmd->longname = strmem;
         }
