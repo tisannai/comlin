@@ -28,6 +28,7 @@
               (file->lines (si "test_#{test}")))
     (let ((ret (system (si "diff #{rf} #{gf}"))))
       (chdir "..")
-      ret)))
+      ;; (ppr (list "scheme return: " ret))
+      (status:exit-val ret))))
 
 (exit (run-test (como-value "file")))

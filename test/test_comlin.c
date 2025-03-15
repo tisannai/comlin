@@ -5,8 +5,11 @@
 int run_test( char* testname )
 {
     char buf[ 256 ];
+    int ret;
     sprintf( buf, "test/run_test -f %s", testname );
-    return system( buf );
+    ret = system( buf );
+    // printf( "return value: %d\n", ret );
+    return ret;
 }
 
 

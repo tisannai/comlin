@@ -848,7 +848,7 @@ static void opt_doc( sd_t str, cl_opt_t o, cl_cmd_t cmd )
     for ( ;; ) {
         if ( o->doc[ e ] == '\n' || o->doc[ e ] == 0 ) {
             if ( first ) {
-                sd_format_quick( str, "  %s%p", cl_opt_id( o ), cmd->conf->tab + 2 );
+                sd_format_quick( str, "  %s%p ", cl_opt_id( o ), cmd->conf->tab + 2 );
                 sd_append( str, sc_from_cl( (const char*)&( o->doc[ s ] ), ( e - s ) ) );
                 sd_append_ch( str, '\n' );
 
@@ -862,7 +862,7 @@ static void opt_doc( sd_t str, cl_opt_t o, cl_cmd_t cmd )
             } else {
                 if ( o->doc[ s ] == '\t' ) {
                     s++;
-                    sd_format_quick( str, "  %s%p", "", cmd->conf->tab + 2 );
+                    sd_format_quick( str, "  %s%p ", "", cmd->conf->tab + 2 );
                 }
                 sd_append( str, sc_from_cl( (const char*)&( o->doc[ s ] ), ( e - s ) ) );
                 sd_append_ch( str, '\n' );
